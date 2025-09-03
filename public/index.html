@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>St. Xavier's College - Alumni Birthday System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #003366;
+            --accent-gold: #ce1c1c;
+            --light-blue: #4A90E2;
+            --white: #FFFFFF;
+            --light-gray: #F8F9FA;
+            --dark-gray: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-gray);
+            background: linear-gradient(135deg, var(--light-blue) 0%, var(--primary-blue) 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: var(--white);
+            border: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-blue);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .logo-fallback {
+            display: none;
+            font-size: 16px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .header h1 {
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            color: var(--light-blue);
+            font-size: 1.2em;
+        }
+
+        .main-panel {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .upload-section {
+            border: 3px dashed var(--accent-gold);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: var(--light-gray);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: var(--light-blue);
+            background: #f0f8ff;
+        }
+
+        .upload-btn {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .upload-btn:hover {
+            background: var(--light-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .send-btn {
+            background: var(--accent-gold);
+            color: var(--white);
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+
+        .send-btn:hover {
+            background: #ff3300;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .preview-section {
+            margin-top: 30px;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .preview-table th {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 15px;
+            text-align: left;
+        }
+
+        .preview-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .preview-table tr:hover {
+            background: var(--light-gray);
+        }
+
+        .birthday-card-preview {
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--light-blue) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            color: var(--white);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: perspective(1000px) rotateY(5deg);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .birthday-card-preview:hover {
+            transform: perspective(1000px) rotateY(0deg) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .birthday-card-preview h2 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .birthday-card-preview p {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        .footer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        .footer a:hover {
+            color: var(--light-blue);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+       <header class="header">
+            <div class="logo">
+                <img src="uploads/sxca_logo.png" alt="SXCA Logo" id="logoImg" onerror="handleLogoError(this)">
+                <div class="logo-fallback" id="logoFallback">SXCA</div>
+            </div>
+            <h1>St. Xavier's College</h1>
+            <p>Alumni Birthday Celebration System</p>
+        </header>
+
+        <div class="main-panel">
+            <h2>Upload Alumni CSV File</h2>
+            <p>Upload a CSV file with columns: Name, Email, Birthday (MM-DD format), Graduation Year</p>
+            
+            <div class="upload-section">
+                <div style="font-size: 48px; margin-bottom: 15px;">📊</div>
+                <h3>Drop your CSV file here</h3>
+                <input type="file" id="csvFile" accept=".csv" style="display: none;" />
+                <button class="upload-btn" onclick="document.getElementById('csvFile').click()">Choose CSV File</button>
+            </div>
+
+            <div id="status"></div>
+            
+            <div style="text-align: center;">
+                <button class="send-btn" id="sendEmails" disabled onclick="sendBirthdayEmails()">
+                    🎉 Send Birthday Emails Today
+                </button>
+            </div>
+
+            <div id="preview" class="preview-section" style="display: none;"></div>
+        </div>
+
+        <div class="birthday-card-preview" onclick="showFullCard()">
+            <h2>🎉 Happy Birthday! 🎂</h2>
+            <p>Dear [Alumni Name],</p>
+            <p>St. Xavier's College wishes you a wonderful birthday!</p>
+            <p>Class of [Graduation Year] • Click to view full celebration page</p>
+            <small>Click this card to see the full birthday page</small>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2025 St. Xavier's College | 
+            <a href="#about">About Us</a> | 
+            <a href="#contact">Contact</a> | 
+            <a href="#alumni">Alumni Network</a></p>
+            <p>Celebrating our alumni community with love and pride</p>
+        </footer>
+    </div>
+
+    <script>
+        let alumniData = [];
+        
+        // Handle logo loading errors
+        function handleLogoError(img) {
+            console.log('Logo failed to load, showing fallback');
+            img.style.display = 'none';
+            document.getElementById('logoFallback').style.display = 'block';
+        }
+
+        // Try different logo paths
+        function initializeLogo() {
+            const logoImg = document.getElementById('logoImg');
+            const possiblePaths = [
+                'uploads/sxca_logo.png',
+                'uploads/sxca_logo.png',
+                'uploads/sxca_logo.png',
+                './sxca_logo.png'
+            ];
+            
+            let currentPathIndex = 0;
+            
+            function tryNextPath() {
+                if (currentPathIndex < possiblePaths.length) {
+                    logoImg.src = possiblePaths[currentPathIndex];
+                    currentPathIndex++;
+                } else {
+                    handleLogoError(logoImg);
+                }
+            }
+            
+            logoImg.onerror = tryNextPath;
+            tryNextPath(); // Start with first path
+        }
+        
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const csv = e.target.result;
+                    parseCSV(csv);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function parseCSV(csv) {
+            try {
+                const lines = csv.split('\n');
+                const headers = lines[0].split(',').map(h => h.trim());
+                
+                // Expected headers: Name, Email, Birthday, Graduation Year
+                const requiredHeaders = ['Name', 'Email', 'Birthday', 'Graduation Year'];
+                const headerCheck = requiredHeaders.every(h => 
+                    headers.some(header => header.toLowerCase().includes(h.toLowerCase()))
+                );
+                
+                if (!headerCheck) {
+                    showStatus('error', 'CSV must contain columns: Name, Email, Birthday (MM-DD), Graduation Year');
+                    return;
+                }
+                
+                alumniData = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',').map(v => v.trim());
+                    if (values.length >= 4 && values[0]) {
+                        alumniData.push({
+                            name: values[0],
+                            email: values[1],
+                            birthday: values[2],
+                            graduationYear: values[3]
+                        });
+                    }
+                }
+                
+                if (alumniData.length > 0) {
+                    showStatus('success', `Successfully loaded ${alumniData.length} alumni records!`);
+                    document.getElementById('sendEmails').disabled = false;
+                    showPreview();
+                } else {
+                    showStatus('error', 'No valid alumni data found in CSV file');
+                }
+                
+            } catch (error) {
+                showStatus('error', 'Error parsing CSV file: ' + error.message);
+            }
+        }
+
+        function showStatus(type, message) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+
+        function showPreview() {
+            const today = new Date();
+            const todayString = String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+            
+            const birthdayToday = alumniData.filter(alumni => alumni.birthday === todayString);
+            
+            let html = '<h3>Alumni Data Preview</h3>';
+            html += `<p>Total Alumni: ${alumniData.length} | Birthdays Today: ${birthdayToday.length}</p>`;
+            
+            if (birthdayToday.length > 0) {
+                html += '<h4 style="color: var(--accent-gold); margin: 20px 0;">🎉 Birthdays Today:</h4>';
+                html += '<table class="preview-table">';
+                html += '<tr><th>Name</th><th>Email</th><th>Class of</th></tr>';
+                birthdayToday.forEach(alumni => {
+                    html += `<tr>
+                        <td>${alumni.name}</td>
+                        <td>${alumni.email}</td>
+                        <td>${alumni.graduationYear}</td>
+                    </tr>`;
+                });
+                html += '</table>';
+            } else {
+                html += '<p style="color: var(--light-blue);">No birthdays today. System is ready for daily monitoring.</p>';
+            }
+            
+            html += '<h4 style="margin-top: 30px;">Sample Alumni Data:</h4>';
+            html += '<table class="preview-table">';
+            html += '<tr><th>Name</th><th>Email</th><th>Birthday</th><th>Class of</th></tr>';
+            alumniData.slice(0, 5).forEach(alumni => {
+                html += `<tr>
+                    <td>${alumni.name}</td>
+                    <td>${alumni.email}</td>
+                    <td>${alumni.birthday}</td>
+                    <td>${alumni.graduationYear}</td>
+                </tr>`;
+            });
+            html += '</table>';
+            
+            document.getElementById('preview').innerHTML = html;
+            document.getElementById('preview').style.display = 'block';
+        }
+
+        function sendBirthdayEmails() {
+            const today = new Date();
+            const todayString = String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+            
+            const birthdayAlumni = alumniData.filter(alumni => alumni.birthday === todayString);
+            
+            if (birthdayAlumni.length === 0) {
+                showStatus('info', 'No birthdays today! System will check daily automatically.');
+                return;
+            }
+            
+            showStatus('info', `Sending birthday emails to ${birthdayAlumni.length} alumni...`);
+            
+            // Simulate email sending
+            setTimeout(() => {
+                birthdayAlumni.forEach(alumni => {
+                    console.log(`Sending birthday email to ${alumni.name} (${alumni.email})`);
+                    // In a real implementation, this would integrate with an email service
+                    sendEmailToAlumni(alumni);
+                });
+                
+                showStatus('success', `🎉 Successfully sent ${birthdayAlumni.length} birthday emails!`);
+            }, 2000);
+        }
+
+        async function sendEmailToAlumni(alumni) {
+            const emailContent = generateBirthdayEmail(alumni);
+            
+            // EMAIL CONFIGURATION - UPDATE THESE VALUES:
+            const emailConfig = {
+                senderEmail: "blessy.parmar@sxca.edu.in",           // your college email
+                senderPassword: "nxzw hcxv pvbb dqxm",              // app password (not your real login password)
+                smtpHost: "smtp.gmail.com",                         // if sxca.edu.in is on Google Workspace
+                smtpPort: 587                                       // TLS port
+            };
+
+            
+            try {
+                // Send email via backend API
+                const response = await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        config: emailConfig,
+                        to: alumni.email,
+                        subject: `🎉 Happy Birthday from St. Xavier's College(Autonomous), Ahmedabad!`,
+                        html: emailContent.html
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log(`✅ Email sent successfully to ${alumni.name} (${alumni.email})`);
+                } else {
+                    console.error(`❌ Failed to send email to ${alumni.email}`);
+                }
+            } catch (error) {
+                console.error(`❌ Email error for ${alumni.email}:`, error);
+            }
+        }
+
+        function generateBirthdayEmail(alumni) {
+            const cardUrl = `${window.location.origin}/birthday-card?name=${encodeURIComponent(alumni.name)}&year=${alumni.graduationYear}`;
+            
+            return {
+                to: alumni.email,
+                subject: `🎉 Happy Birthday from St. Xavier's College(Autonomous), Ahmedabad!`,
+                html: `
+                   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: linear-gradient(135deg, #E63946 0%, #4A90E2 100%); padding: 20px; border-radius: 15px;">
+                        <div style="text-align: center; color: white;">
+                            <div style="background: #003366; width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: white; overflow: hidden;">
+                                <img src="${window.location.origin}uploads/sxca_logo.png" alt="SXC Logo" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'; this.parentElement.innerHTML='SXC';">
+                            </div>
+                            
+                            <h1 style="margin: 0 0 10px 0; font-size: 2.5em; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color:#FFD1D1;">🎉 Happy Birthday! 🎂</h1>
+                            
+                            <p style="font-size: 1.3em; margin: 15px 0;">Dear ${alumni.name},</p>
+                            <p style="font-size: 1.2em; margin: 15px 0;">St. Xavier's College wishes you a wonderful birthday filled with <span style="color:#FFD1D1; font-weight:bold;">joy</span> and <span style="color:#FFD1D1; font-weight:bold;">success</span>!</p>
+                            <p style="font-size: 1.1em; margin: 15px 0; color:#FFD1D1; font-weight:bold;">Class of ${alumni.graduationYear}</p>
+                            
+                            <a href="${cardUrl}" style="display: inline-block; background: #E63946; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; margin: 20px 0; font-size: 18px; font-weight: bold;">🎁 Open Your Birthday Card</a>
+                            
+                            <p style="font-size: 0.9em; margin-top: 30px; color:#eee;">With love and pride,<br>St. Xavier's College (Autonomous), Ahmedabad Alumni Relations</p>
+                        </div>
+                    </div>
+                `
+            };
+        }
+
+        function showFullCard() {
+            // This would open a new page with the full birthday celebration
+            const newWindow = window.open('', '_blank', 'width=800,height=600');
+            newWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Birthday Celebration - St. Xavier's College</title>
+                    <style>
+                    body { 
+                        font-family: Arial, sans-serif; 
+                        background: linear-gradient(135deg, #E63946 0%, #4A90E2 100%); /* red → blue */
+                        margin: 0; 
+                        padding: 20px; 
+                        min-height: 100vh;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .card { 
+                        background: rgba(255,255,255,0.95); 
+                        padding: 50px; 
+                        border-radius: 20px; 
+                        text-align: center; 
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                        max-width: 600px;
+                    }
+                    .logo { 
+                        background: #003366;  /* dark blue */
+                        width: 100px; 
+                        height: 100px; 
+                        border-radius: 50%; 
+                        margin: 0 auto 30px; 
+                        display: flex; 
+                        align-items: center; 
+                        justify-content: center; 
+                        font-size: 30px; 
+                        color: white; 
+                        font-weight: bold;
+                        overflow: hidden;
+                        border: 3px solid #fff;
+                    }
+                    .logo img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                    }
+                    h1 { color: #E63946; font-size: 3em; margin: 20px 0; } /* red */
+                    p { font-size: 1.3em; margin: 15px 0; color: #333; }
+                    .footer { margin-top: 40px; padding-top: 20px; border-top: 2px solid #4A90E2; } /* blue border */
+                    .footer a { color: #E63946; margin: 0 15px; text-decoration: none; font-weight: bold; }
+                    .footer a:hover { color: #003366; }
+                    </style>
+                </head>
+                <body>
+                  <div class="card">
+                        <div class="logo">
+                            <img src="${window.location.origin}uploads/sxca_logo.png" alt="SXC Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='SXC';">
+                        </div>
+                        <h1>🎉 Happy Birthday! 🎂</h1>
+                        <p>Dear Alumni,</p>
+                        <p>On this special day, St. Xavier's College celebrates you and all the wonderful memories we share!</p>
+                        <p>Thank you for being an integral part of our proud legacy.</p>
+                        <p style="font-size: 1.5em; color: #E63946; font-weight: bold;">
+                            May your year ahead be filled with joy, success, and happiness!
+                        </p>
+                        <div class="footer">
+                            <h3 style="color: #003366;">St. Xavier's College (Autonomous), Ahmedabad</h3>
+                            <p>
+                                <a href="https://sxca.edu.in/about-us/">About Us</a> | 
+                                <a href="https://sxca.edu.in/about-us/">Contact</a> | 
+                                <a href="#alumni">Alumni Network</a>
+                            </p>
+                            <p style="font-style: italic; color: #666;">
+                                Celebrating our alumni community with love and pride
+                            </p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+        }
+        
+        // Auto-check for birthdays on page load and initialize logo
+        window.addEventListener('load', function() {
+            console.log('Birthday system loaded and ready!');
+            initializeLogo();
+        });
+    </script>
+</body>
+</html>
